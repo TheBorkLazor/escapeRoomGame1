@@ -1,83 +1,147 @@
 import inquirer from "inquirer";
 
-// move the below to own file to separate!! ------------------
+class room {
+  //Class for a room
+  constructor(description) {
+    this.description = description;
+  }
+
+  //Method to enter the room
+  enter() {
+    console.log(`You entered ${this.description}`);
+  }
+}
+
+// subclass representing a puzzle room, inherits from room
+class PuzzleRoom extends room {
+  constructor(description, puzzle) {
+    super(description);
+    this.puzzle = puzzle;
+  }
+  // method to sumulate solving a puzzle in the room
+  solvePuzzle() {
+    console.log(`Solving puzzle: ${this.puzzle}`);
+  }
+}
 
 
+function getName() {
+  return inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "username",
+        message: "Enter your name",
+      },
+    ])
+    .then((answers) => answers.username);
+}
 
-const puzzle3 = async () => {
-  let { result } = await inquirer.prompt({
+function mathsPuzzle() {
+  return inquirer.prompt({
     type: "list",
     name: "result",
-    message: "20 % of 2 is equal to?",
+    message: "20% of 2 is equal to?",
     choices: ["20", "4", "0.4", "0.004"]
   })
-  return result
-}
-
-const displayPuzzle3 = async () => {
-  let rightAnswer = "0.4"
-  let userAnswer = await puzzle3();
-  console.log('ANSWERRR', userAnswer, rightAnswer)
-  if (userAnswer === rightAnswer) {
-    console.log("CORRECT! You are free to move on")
-  } else {
-    console.log("INCORRECT. You're stuck!")
-  }
-}
-
-// -----------------------------------------
-
-// const puzzle4 = async () => {
-
-// }
-
-// const displayPuzzle4 = async () => {
-
-// }
-// ----------------------------------------
-
-class EscapeRoomGame {
-  constructor() {
-  }
-
-  welcome() {
-    console.log("---------------------------------")
-    console.log("Welcome to our escape room. You're trapped. Solve the problems to make your way out. Warning - you may be timed!");
-    console.log("---------------------------------")
-  }
-
-  playPuzzle3() {
-    displayPuzzle3()
-  }
-
-  // playPuzzle4() {
-  //   displayPuzzle4()
-  // }
-
+    .then((result) => {
+      let rightAnswer = "0.4"
+      let userAnswer = result.result;
+      console.log('ANSWER', userAnswer, rightAnswer)
+      if (userAnswer === rightAnswer) {
+        console.log("CORRECT! You are free to move on")
+      } else {
+        console.log("INCORRECT. You're stuck!")
+      }
+    })
 }
 
 
+function searchRoom() {
+  const searchOptions = [
+    "Look under the bed",
+    "Check the drawer",
+    "Look behind the painting",
+  ];
+  return inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "action",
+        message: "What would you like to do?",
+        choices: searchOptions,
+      },
+    ])
+    .then((answers) => {
+      const selectedOption = answers.action;
+
+      if (selectedOption === "Look behind the painting") {
+        console.log(
+          "You chose to Look behind the painting. You found a key, this will unlock the next room"
+        );
+      } else {
+        console.log(`You chose to ${selectedOption}. You found nothing.`);
+      }
+    });
+}
 
 
+async function startGame() {
+  console.log("Welcome to the Excape Room Game!");
 
-// const level = async () => {
-//   let { answer } = await inquirer.prompt({
-//     name: "result",
-//     type: "list",
-//     message: "Choose difficulty level?",
-//     choices: ["easy", "medium", "hard"]
+  const username = await getName();
+  console.log(`Hello, ${username}! Let's begin.`);
 
-//   })
+  const room1 = new room("the first room");
+  room1.enter();
 
-// return answer
+  // play first game
+  await searchRoom();
+
+  // play second game
+  await mathsPuzzle();
+
+}
+
+startGame();
+
+// function getComputerChoice() {
+//   const choices = ["rock", "paper", "scissors"]; //choices tha are avaliable
+//   const randomIndex = Math.floor(Math.random() * choices.length); // random number to fit the lenght of the choices array
+//   return choices[randomIndex];
 // }
 
-// const display = async () => {
-//   let response = await level()
-//   console.log(response)
+// function determineWinner(userChoice, computerChoice) {
+//   if (userChoice === computerChoice) {
+//     return "Its a tie";
+//   } else if (
+//     (userChoice === "rock" && computerChoice === "scissor") ||
+//     (userChoice === "paper" && computerChoice === "rock") ||
+//     (userChoice === "scissors" && computerChoice === "paper")
+//   ) {
+//     return "You win!";
+//   } else {
+//     return "You lose!";
+//   }
 // }
 
-const game = new EscapeRoomGame()
-game.welcome();
-// game.level();
-game.playPuzzle3();
+// function playGame() {
+//   inquirer
+//     .prompt([
+//       {
+//         type: "list",
+//         name: "userChoice",
+//         message: "Your move",
+//         choices: ["rock", "paper", "scissor"],
+//       },
+//     ])
+//     .then((answers) => {
+//       const userChoice = answers.userChoice;
+//       const computerChoice = getComputerChoice();
+//       console.log(`Computer chose: ${computerChoice}`);
+//       console.log(determineWinner(userChoice, computerChoice));
+//     });
+// }
+
+// playGame();
+
