@@ -5,6 +5,7 @@ class room {
   constructor(description) {
     this.description = description;
   }
+
   //Method to enter the room
   enter() {
     console.log(`You entered ${this.description}`);
@@ -23,6 +24,7 @@ class PuzzleRoom extends room {
   }
 }
 
+
 function getName() {
   return inquirer
     .prompt([
@@ -34,6 +36,26 @@ function getName() {
     ])
     .then((answers) => answers.username);
 }
+
+function mathsPuzzle() {
+  return inquirer.prompt({
+    type: "list",
+    name: "result",
+    message: "20% of 2 is equal to?",
+    choices: ["20", "4", "0.4", "0.004"]
+  })
+    .then((result) => {
+      let rightAnswer = "0.4"
+      let userAnswer = result.result;
+      console.log('ANSWER', userAnswer, rightAnswer)
+      if (userAnswer === rightAnswer) {
+        console.log("CORRECT! You are free to move on")
+      } else {
+        console.log("INCORRECT. You're stuck!")
+      }
+    })
+}
+
 
 function searchRoom() {
   const searchOptions = [
@@ -63,6 +85,7 @@ function searchRoom() {
     });
 }
 
+
 async function startGame() {
   console.log("Welcome to the Excape Room Game!");
 
@@ -72,7 +95,12 @@ async function startGame() {
   const room1 = new room("the first room");
   room1.enter();
 
+  // play first game
   await searchRoom();
+
+  // play second game
+  await mathsPuzzle();
+
 }
 
 startGame();
@@ -114,4 +142,6 @@ startGame();
 //       console.log(determineWinner(userChoice, computerChoice));
 //     });
 // }
-playGame();
+
+// playGame();
+
