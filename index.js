@@ -1,15 +1,8 @@
 import inquirer from "inquirer";
-
-class room {
-  //Class for a room
-  constructor(description) {
-    this.description = description;
-  }
-  //Method to enter the room
-  enter() {
-    console.log(`You entered ${this.description}`);
-  }
-}
+import room from "./functions/room.js";
+import getName from "./functions/getName.js";
+import searchRoom from "./functions/searchRoom.js";
+import mathsPuzzle from "./functions/mathPuzzle.js";
 
 // subclass representing a puzzle room, inherits from room
 class PuzzleRoom extends room {
@@ -21,66 +14,6 @@ class PuzzleRoom extends room {
   solvePuzzle() {
     console.log(`Solving puzzle: ${this.puzzle}`);
   }
-}
-
-function getName() {
-  return inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "username",
-        message: "Enter your name",
-      },
-    ])
-    .then((answers) => answers.username);
-}
-
-function searchRoom() {
-  const searchOptions = [
-    "Look under the bed",
-    "Check the drawer",
-    "Look behind the painting",
-  ];
-  return inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "action",
-        message: "What would you like to do?",
-        choices: searchOptions,
-      },
-    ])
-    .then((answers) => {
-      const selectedOption = answers.action;
-
-      if (selectedOption === "Look behind the painting") {
-        console.log(
-          "You chose to Look behind the painting. You found a key, this will unlock the next room"
-        );
-      } else {
-        console.log(`You chose to ${selectedOption}. You found nothing.`);
-      }
-    });
-}
-
-function mathsPuzzle() {
-  return inquirer
-    .prompt({
-      type: "list",
-      name: "result",
-      message: "20% of 2 is equal to?",
-      choices: ["20", "4", "0.4", "0.004"],
-    })
-    .then((result) => {
-      let rightAnswer = "0.4";
-      let userAnswer = result.result;
-      console.log("ANSWER", userAnswer, rightAnswer);
-      if (userAnswer === rightAnswer) {
-        console.log("CORRECT! You are free to move on");
-      } else {
-        console.log("INCORRECT. You're stuck!");
-      }
-    });
 }
 
 function getComputerChoice() {
@@ -103,22 +36,25 @@ function determineWinner(userChoice, computerChoice) {
   }
 }
 
-function playGame() {
-  inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "userChoice",
-        message: "Your move",
-        choices: ["rock", "paper", "scissor"],
-      },
-    ])
-    .then((answers) => {
-      const userChoice = answers.userChoice;
-      const computerChoice = getComputerChoice();
-      console.log(`Computer chose: ${computerChoice}`);
-      console.log(determineWinner(userChoice, computerChoice));
-    });
+async function playGame() {
+  const answers = await inquirer.prompt([
+    {
+      type: "list",
+      name: "userChoice",
+      message: "Your move",
+      choices: ["rock", "paper", "scissor"],
+    },
+  ]);
+  const userChoice = answers.userChoice;
+  const computerChoice = getComputerChoice();
+  console.log(`Computer chose: ${computerChoice}`);
+  const result = determineWinner(userChoice, computerChoice);
+  console.log(result);
+
+  if (result === "You lose!") {
+    console.log("Game Over!");
+    process.exit();
+  }
 }
 
 async function startGame() {
