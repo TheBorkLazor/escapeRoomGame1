@@ -1,15 +1,8 @@
 import inquirer from "inquirer";
-
-class room {
-  //Class for a room
-  constructor(description) {
-    this.description = description;
-  }
-  //Method to enter the room
-  enter() {
-    console.log(`You entered ${this.description}`);
-  }
-}
+import room from "./functions/room.js";
+import getName from "./functions/getName.js";
+import searchRoom from "./functions/searchRoom.js";
+import mathsPuzzle from "./functions/mathPuzzle.js";
 
 // subclass representing a puzzle room, inherits from room
 class PuzzleRoom extends room {
@@ -23,64 +16,41 @@ class PuzzleRoom extends room {
   }
 }
 
-function getName() {
-  return inquirer
-    .prompt([
-      {
+async function riddle() {
+  let correctAnswer = "light";
+  let attempts = 0;
+
+  function solveRiddle() {
+    return inquirer
+      .prompt({
         type: "input",
-        name: "username",
-        message: "Enter your name",
-      },
-    ])
-    .then((answers) => answers.username);
-}
+        name: "result",
+        message: "What can fill a room but takes up no space?",
+      })
+      .then((result) => {
+        let answer = result.result.toLowerCase();
+        return answer;
+      });
+  }
 
-function searchRoom() {
-  const searchOptions = [
-    "Look under the bed",
-    "Check the drawer",
-    "Look behind the painting",
-  ];
-  return inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "action",
-        message: "What would you like to do?",
-        choices: searchOptions,
-      },
-    ])
-    .then((answers) => {
-      const selectedOption = answers.action;
+  while (attempts < 2) {
+    const userAnswer = await solveRiddle();
+    console.log("Try again!");
 
-      if (selectedOption === "Look behind the painting") {
-        console.log(
-          "You chose to Look behind the painting. You found a key, this will unlock the next room"
-        );
-      } else {
-        console.log(`You chose to ${selectedOption}. You found nothing.`);
-      }
-    });
-}
+    if (userAnswer === correctAnswer) {
+      console.log(
+        "----------------CORRECT!---------------\n You are free to move on"
+      );
+      return;
+    } else {
+      attempts++;
+      console.log(
+        "---------------INCORRECT---------------\n Clue - Look out at night, and I am in no place."
+      );
+    }
+  }
 
-function mathsPuzzle() {
-  return inquirer
-    .prompt({
-      type: "list",
-      name: "result",
-      message: "20% of 2 is equal to?",
-      choices: ["20", "4", "0.4", "0.004"],
-    })
-    .then((result) => {
-      let rightAnswer = "0.4";
-      let userAnswer = result.result;
-      console.log("ANSWER", userAnswer, rightAnswer);
-      if (userAnswer === rightAnswer) {
-        console.log("CORRECT! You are free to move on");
-      } else {
-        console.log("INCORRECT. You're stuck!");
-      }
-    });
+  console.log("You're now in the dark forever!");
 }
 
 function getComputerChoice() {
@@ -91,7 +61,7 @@ function getComputerChoice() {
 
 function determineWinner(userChoice, computerChoice) {
   if (userChoice === computerChoice) {
-    return "Its a tie";
+    return "It's a tie";
   } else if (
     (userChoice === "rock" && computerChoice === "scissor") ||
     (userChoice === "paper" && computerChoice === "rock") ||
@@ -103,22 +73,30 @@ function determineWinner(userChoice, computerChoice) {
   }
 }
 
-function playGame() {
-  inquirer
-    .prompt([
+async function playGame() {
+  let result = "It's a tie";
+
+  while (result === "It's a tie") {
+    const answers = await inquirer.prompt([
       {
         type: "list",
         name: "userChoice",
         message: "Your move",
         choices: ["rock", "paper", "scissor"],
       },
-    ])
-    .then((answers) => {
-      const userChoice = answers.userChoice;
-      const computerChoice = getComputerChoice();
-      console.log(`Computer chose: ${computerChoice}`);
-      console.log(determineWinner(userChoice, computerChoice));
-    });
+    ]);
+
+    const userChoice = answers.userChoice;
+    const computerChoice = getComputerChoice();
+    console.log(`Computer chose: ${computerChoice}`);
+    result = determineWinner(userChoice, computerChoice);
+    console.log(result);
+  }
+
+  if (result === "You lose!") {
+    console.log("Game Over!");
+    process.exit();
+  }
 }
 
 async function startGame() {
@@ -133,6 +111,9 @@ async function startGame() {
   await searchRoom();
 
   await mathsPuzzle();
+
+  console.log("Great Job!");
+  await riddle();
 
   console.log("Now, lets play a game of Rock, Paper, Scissors!");
   await playGame();
