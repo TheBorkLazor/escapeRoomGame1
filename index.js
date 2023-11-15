@@ -94,7 +94,7 @@ async function playGame() {
   }
 
   if (result === "You lose!") {
-    console.log("Game Over!");
+    console.log("Game Over! Thanks for playing loser");
     process.exit();
   }
 }
