@@ -16,6 +16,43 @@ class PuzzleRoom extends room {
   }
 }
 
+async function riddle() {
+  let correctAnswer = "light";
+  let attempts = 0;
+
+  function solveRiddle() {
+    return inquirer
+      .prompt({
+        type: "input",
+        name: "result",
+        message: "What can fill a room but takes up no space?",
+      })
+      .then((result) => {
+        let answer = result.result.toLowerCase();
+        return answer;
+      });
+  }
+
+  while (attempts < 2) {
+    const userAnswer = await solveRiddle();
+    console.log("Try again!");
+
+    if (userAnswer === correctAnswer) {
+      console.log(
+        "----------------CORRECT!---------------\n You are free to move on"
+      );
+      return;
+    } else {
+      attempts++;
+      console.log(
+        "---------------INCORRECT---------------\n Clue - Look out at night, and I am in no place."
+      );
+    }
+  }
+
+  console.log("You're now in the dark forever!");
+}
+
 function getComputerChoice() {
   const choices = ["rock", "paper", "scissors"]; //choices tha are avaliable
   const randomIndex = Math.floor(Math.random() * choices.length); // random number to fit the lenght of the choices array
@@ -24,7 +61,7 @@ function getComputerChoice() {
 
 function determineWinner(userChoice, computerChoice) {
   if (userChoice === computerChoice) {
-    return "Its a tie";
+    return "It's a tie";
   } else if (
     (userChoice === "rock" && computerChoice === "scissor") ||
     (userChoice === "paper" && computerChoice === "rock") ||
@@ -37,19 +74,24 @@ function determineWinner(userChoice, computerChoice) {
 }
 
 async function playGame() {
-  const answers = await inquirer.prompt([
-    {
-      type: "list",
-      name: "userChoice",
-      message: "Your move",
-      choices: ["rock", "paper", "scissor"],
-    },
-  ]);
-  const userChoice = answers.userChoice;
-  const computerChoice = getComputerChoice();
-  console.log(`Computer chose: ${computerChoice}`);
-  const result = determineWinner(userChoice, computerChoice);
-  console.log(result);
+  let result = "It's a tie";
+
+  while (result === "It's a tie") {
+    const answers = await inquirer.prompt([
+      {
+        type: "list",
+        name: "userChoice",
+        message: "Your move",
+        choices: ["rock", "paper", "scissor"],
+      },
+    ]);
+
+    const userChoice = answers.userChoice;
+    const computerChoice = getComputerChoice();
+    console.log(`Computer chose: ${computerChoice}`);
+    result = determineWinner(userChoice, computerChoice);
+    console.log(result);
+  }
 
   if (result === "You lose!") {
     console.log("Game Over!");
@@ -69,6 +111,9 @@ async function startGame() {
   await searchRoom();
 
   await mathsPuzzle();
+
+  console.log("Great Job!");
+  await riddle();
 
   console.log("Now, lets play a game of Rock, Paper, Scissors!");
   await playGame();
