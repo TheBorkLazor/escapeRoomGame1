@@ -1,5 +1,27 @@
 import inquirer from "inquirer";
 
+// async function playGame() {
+//   let playGameAgain = true;
+
+//   while (playGameAgain) {
+//     await startGame();
+
+//     const { again } = await inquirer.prompt({
+//       type: 'confirm',
+//       name: 'again',
+//       message: 'Do you want to play again?',
+//       default: true,
+//     });
+
+//     playGameAgain = again;
+//   }
+
+//   console.log('Thanks for playing!');
+
+// }
+
+
+
 class room {
   //Class for a room
   constructor(description) {
@@ -18,11 +40,28 @@ class PuzzleRoom extends room {
     super(description);
     this.puzzle = puzzle;
   }
-  // method to sumulate solving a puzzle in the room
+  // method to simulate solving a puzzle in the room
   solvePuzzle() {
     console.log(`Solving puzzle: ${this.puzzle}`);
   }
 }
+
+// class DarkRoom extends room {
+//   constructor(description, ) {
+//     super(description);
+//     this. = ;
+//   }
+
+// // method to simulate solving a riddle in the room
+// solveRiddle() {
+//   console.log(`Oh no! You got the question wrong. The room is now pitch black. Solve the riddle to get the lights back on.`);
+// }
+
+// ghost() {
+
+// }
+// }
+
 
 
 function getName() {
@@ -47,7 +86,7 @@ function mathsPuzzle() {
     .then((result) => {
       let rightAnswer = "0.4"
       let userAnswer = result.result;
-      console.log('ANSWER', userAnswer, rightAnswer)
+
       if (userAnswer === rightAnswer) {
         console.log("CORRECT! You are free to move on")
       } else {
@@ -56,6 +95,39 @@ function mathsPuzzle() {
     })
 }
 
+async function riddle() {
+  let correctAnswer = "light";
+  let attempts = 0;
+
+  function solveRiddle() {
+    return inquirer.prompt({
+      type: "input",
+      name: "result",
+      message: "What can fill a room but takes up no space?",
+    })
+      .then((result) => {
+        let answer = result.result.toLowerCase();
+        return answer;
+
+      })
+  }
+
+  while (attempts < 2) {
+    const userAnswer = await solveRiddle()
+    console.log("Try again!");
+
+
+    if (userAnswer === correctAnswer) {
+      console.log("----------------CORRECT!---------------\n You are free to move on");
+    }
+    else {
+      attempts++;
+      console.log("---------------INCORRECT---------------\n Clue - Look out at night, and I am in no place.");
+    }
+  }
+
+  console.log("You're now in the dark forever!");
+}
 
 function searchRoom() {
   const searchOptions = [
@@ -87,13 +159,13 @@ function searchRoom() {
 
 
 async function startGame() {
-  console.log("Welcome to the Excape Room Game!");
+  console.log("Welcome to the Escape Room Game!");
 
   const username = await getName();
   console.log(`Hello, ${username}! Let's begin.`);
-
-  const room1 = new room("the first room");
-  room1.enter();
+  // ---------------Do for each room-----------------------
+  // const room1 = new room("the first room");
+  // room1.enter();
 
   // play first game
   await searchRoom();
@@ -101,9 +173,14 @@ async function startGame() {
   // play second game
   await mathsPuzzle();
 
+  //play third game
+  await riddle();
+
 }
 
 startGame();
+
+
 
 // function getComputerChoice() {
 //   const choices = ["rock", "paper", "scissors"]; //choices tha are avaliable
@@ -144,4 +221,6 @@ startGame();
 // }
 
 // playGame();
+
+
 
