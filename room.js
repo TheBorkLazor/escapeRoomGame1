@@ -1,3 +1,6 @@
+import chalk from "chalk";
+
+
 class room {
   //Class for a room
   constructor(description) {
@@ -5,7 +8,7 @@ class room {
   }
   //Method to enter the room
   enter() {
-    console.log(`You entered ${this.description}`);
+    console.log(chalk.bgGreenBright.bold.underline(`You entered ${this.description}`));
   }
 }
 
