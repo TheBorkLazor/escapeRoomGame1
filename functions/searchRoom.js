@@ -1,11 +1,15 @@
 import inquirer from "inquirer";
 
+import chalk from "chalk";
+
 function searchRoom() {
+
   const searchOptions = [
     "Look under the bed",
     "Check the drawer",
     "Look behind the painting",
   ];
+
   return inquirer
     .prompt([
       {
@@ -19,12 +23,25 @@ function searchRoom() {
       const selectedOption = answers.action;
 
       if (selectedOption === "Look behind the painting") {
-        console.log(
-          "You chose to Look behind the painting. You found a key, this will unlock the next room"
-        );
+        console.log(chalk.bgBlue.bold(
+          `CORRECT!
+
+          You chose to Look behind the painting.
+          You found a key, this will unlock the next room.`
+        ));
+
+
+        return 50;
+
+
       } else {
-        console.log(`You chose to ${selectedOption}. You found nothing.`);
-        return searchRoom();
+        console.log(chalk.bgRed.bold(
+          `INCORRECT.
+
+        You chose to ${selectedOption}.`
+        ));
+
+        return 0;
       }
     });
 }
